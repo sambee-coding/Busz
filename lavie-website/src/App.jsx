@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { 
   Phone, 
@@ -11,7 +10,10 @@ import {
   Sparkles,
   CheckCircle2,
   Play,
-  Pause
+  Pause,
+  Briefcase,
+  Send,
+  ArrowUpRight
 } from 'lucide-react';
 
 export default function LaVieEnRose() {
@@ -26,6 +28,7 @@ export default function LaVieEnRose() {
     reel4: true
   });
 
+  // Table Reservation State
   const [reservation, setReservation] = useState({
     name: '',
     phone: '',
@@ -35,6 +38,17 @@ export default function LaVieEnRose() {
     notes: ''
   });
   const [submitted, setSubmitted] = useState(false);
+
+  // Careers Application Modal State
+  const [careerModalOpen, setCareerModalOpen] = useState(false);
+  const [selectedRole, setSelectedRole] = useState('');
+  const [careerForm, setCareerForm] = useState({
+    name: '',
+    phone: '',
+    experience: '',
+    message: ''
+  });
+  const [careerSubmitted, setCareerSubmitted] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -48,34 +62,67 @@ export default function LaVieEnRose() {
     const video = document.getElementById(id);
     if (!video) return;
     if (video.paused) {
-      video.play();
-      setPlayingVideo((prev) => ({ ...prev, [id]: true }));
+      const playPromise = video.play();
+      if (playPromise !== undefined) {
+        playPromise.catch((err) => console.log('Autoplay or play blocked:', err));
+      }
     } else {
       video.pause();
-      setPlayingVideo((prev) => ({ ...prev, [id]: false }));
     }
   };
 
+  // WHATSAPP DIRECT RESERVATION HANDLER
   const handleReservationSubmit = (e) => {
     e.preventDefault();
+
+    const whatsappNumber = "251995031695";
+
+    const message = `Bonjour La Vie En Rose! 🌹\n\n` +
+      `I would like to reserve a table:\n` +
+      `• *Name:* ${reservation.name}\n` +
+      `• *Phone:* ${reservation.phone}\n` +
+      `• *Guests:* ${reservation.guests} ${reservation.guests === '1' ? 'Person' : 'People'}\n` +
+      `• *Date:* ${reservation.date}\n` +
+      `• *Time:* ${reservation.time}\n` +
+      (reservation.notes ? `• *Special Notes:* ${reservation.notes}\n` : '') +
+      `\nPlease confirm table availability. Thank you!`;
+
+    const encodedMessage = encodeURIComponent(message);
+
     setSubmitted(true);
     setTimeout(() => setSubmitted(false), 5000);
+
+    window.open(`https://wa.me/${whatsappNumber}?text=${encodedMessage}`, '_blank');
+  };
+
+  const handleCareerSubmit = (e) => {
+    e.preventDefault();
+    setCareerSubmitted(true);
+    setTimeout(() => {
+      setCareerSubmitted(false);
+      setCareerModalOpen(false);
+    }, 4000);
+  };
+
+  const openApplyModal = (roleTitle) => {
+    setSelectedRole(roleTitle);
+    setCareerModalOpen(true);
   };
 
   const content = {
     en: {
-      nav: { story: "Our Story", menu: "Menu", videos: "Videos", gallery: "Gallery", reviews: "Reviews", reserve: "Book Table" },
+      nav: { story: "Our Story", menu: "Menu", videos: "Videos", gallery: "Gallery", reviews: "Reviews", locations: "Locations", careers: "Careers", reserve: "Book Table" },
       hero: {
         welcome: "Bienvenue",
-        tagline: "Where Addis meets Paris — Bulbula",
+        tagline: "Where Addis meets Paris — Bulbula & Bole Rwanda",
         desc: "An elegant sanctuary of fine dining, artisanal French pastries, and Italian classics nestled in the heart of Addis Ababa.",
         ctaMenu: "View Menu",
         ctaBook: "Book Table"
       },
       about: {
         tag: "Our Story",
-        title: "A Little Piece of Paris in Bulbula",
-        p1: "Tucked into the heart of Bulbula, La Vie En Rose is where quiet elegance meets everyday comfort. Guests describe our space as peaceful and beautifully designed — a place to slow down over an all-day menu.",
+        title: "A Little Piece of Paris in Addis Ababa",
+        p1: "Tucked into the peaceful neighborhoods of Bulbula and Bole Rwanda, La Vie En Rose is where quiet elegance meets everyday comfort. Guests describe our space as peaceful and beautifully designed — a place to slow down over an all-day menu.",
         p2: "From morning croissants to evening pasta and steak, with fasting-friendly dishes woven in for every guest at the table.",
         point1: "Sun-lit terrace seating",
         point2: "Breakfast through dinner, every day",
@@ -98,6 +145,16 @@ export default function LaVieEnRose() {
         tag: "Guest Testimonials",
         title: "Loved by Our Guests"
       },
+      locations: {
+        tag: "Our Spaces",
+        title: "Visit Our Branches",
+        subtitle: "Experience the La Vie En Rose atmosphere across Addis Ababa."
+      },
+      careers: {
+        tag: "Join Our Team",
+        title: "Career Opportunities",
+        subtitle: "We are expanding! Passionate about hospitality, pastry arts, or Italian cuisine? Join us."
+      },
       reserve: {
         tag: "Direct Reservations",
         title: "Reserve Your Table",
@@ -105,18 +162,18 @@ export default function LaVieEnRose() {
       }
     },
     fr: {
-      nav: { story: "Notre Histoire", menu: "Menu", videos: "Vidéos", gallery: "Galerie", reviews: "Avis", reserve: "Réserver" },
+      nav: { story: "Notre Histoire", menu: "Menu", videos: "Vidéos", gallery: "Galerie", reviews: "Avis", locations: "Adresses", careers: "Carrières", reserve: "Réserver" },
       hero: {
         welcome: "Bienvenue",
-        tagline: "Là où Addis rencontre Paris — Bulbula",
+        tagline: "Là où Addis rencontre Paris — Bulbula & Bole Rwanda",
         desc: "Un sanctuaire élégant de cuisine raffinée, de pâtisseries françaises artisanales et de classiques italiens au cœur d'Addis-Abeba.",
         ctaMenu: "Voir le Menu",
         ctaBook: "Réserver"
       },
       about: {
         tag: "Notre Histoire",
-        title: "Un Petit Coin de Paris à Bulbula",
-        p1: "Niché au cœur de Bulbula, La Vie En Rose est le lieu où l'élégance discrète rencontre le confort quotidien. Nos clients décrivent notre espace comme un havre de paix.",
+        title: "Un Petit Coin de Paris à Addis-Abeba",
+        p1: "Niché au cœur de Bulbula et Bole Rwanda, La Vie En Rose est le lieu où l'élégance discrète rencontre le confort quotidien. Nos clients décrivent notre espace comme un havre de paix.",
         p2: "Du croissant du matin aux pâtes et steaks du soir, avec des options de jeûne adaptées à chaque invité.",
         point1: "Terrasse ensoleillée",
         point2: "Du petit-déjeuner au dîner, tous les jours",
@@ -139,6 +196,16 @@ export default function LaVieEnRose() {
         tag: "Avis Clients",
         title: "Aimé par Nos Clients"
       },
+      locations: {
+        tag: "Nos Lieux",
+        title: "Nos Établissements",
+        subtitle: "Découvrez l'ambiance La Vie En Rose à travers Addis-Abeba."
+      },
+      careers: {
+        tag: "Rejoignez-Nous",
+        title: "Opportunités de Carrière",
+        subtitle: "Passionné par l'hospitalité ou la gastronomie ? Postulez dès aujourd'hui."
+      },
       reserve: {
         tag: "Réservations Directes",
         title: "Réservez Votre Table",
@@ -146,18 +213,18 @@ export default function LaVieEnRose() {
       }
     },
     am: {
-      nav: { story: "ታሪካችን", menu: "ምናሌ", videos: "ቪዲዮዎች", gallery: "ማዕከለ-ስዕላት", reviews: "ግምገማዎች", reserve: "ቦታ ያስይዙ" },
+      nav: { story: "ታሪካችን", menu: "ምናሌ", videos: "ቪዲዮዎች", gallery: "ማዕከለ-ስዕላት", reviews: "ግምገማዎች", locations: "ቅርንጫፎች", careers: "ሥራ ዕድል", reserve: "ቦታ ያስይዙ" },
       hero: {
         welcome: "እንኳን ደህና መጡ",
-        tagline: "አዲስ ፓሪስን የሚያገኝበት — ቡልቡላ",
+        tagline: "አዲስ ፓሪስን የሚያገኝበት — ቡልቡላ እና ቦሌ ሩዋንዳ",
         desc: "በአዲስ አበባ እምብርት ውስጥ የሚገኝ የፈረንሳይና የጣሊያን ውብ ጣዕሞችና ምቹ ከባቢ አየር።",
         ctaMenu: "ምናሌ ይመልከቱ",
         ctaBook: "ቦታ ያስይዙ"
       },
       about: {
         tag: "ታሪካችን",
-        title: "በቡልቡላ ውስጥ ትንሽ ፓሪስ",
-        p1: "በቡልቡላ እምብርት ውስጥ የሚገኘው ላ ቪ አን ሮዝ ጸጥተኛ ውበት ከዕለት ተዕለት ምቾት ጋር የሚገናኝበት ቦታ ነው።",
+        title: "በአዲስ አበባ ውስጥ ትንሽ ፓሪስ",
+        p1: "በቡልቡላ እና ቦሌ ሩዋንዳ እምብርት ውስጥ የሚገኘው ላ ቪ አን ሮዝ ጸጥተኛ ውበት ከዕለት ተዕለት ምቾት ጋር የሚገናኝበት ቦታ ነው።",
         p2: "ከጠዋት ቁርስ እስከ እራት፣ የጾም አማራጮችን ጨምሮ ለሁሉም እንግዶች የተዘጋጀ።",
         point1: "በፀሐይ የተሞላ የውጭ መቀመጫ",
         point2: "ከቁርስ እስከ እራት፣ በየቀኑ",
@@ -179,6 +246,16 @@ export default function LaVieEnRose() {
       reviews: {
         tag: "ግምገማዎች",
         title: "በደንበኞቻችን የተወደደ"
+      },
+      locations: {
+        tag: "ቦታዎቻችን",
+        title: "ቅርንጫፎቻችንን ይጎብኙ",
+        subtitle: "የላ ቪ አን ሮዝን ውብ ከባቢ አየር በአዲስ አበባ ይለማመዱ።"
+      },
+      careers: {
+        tag: "የሥራ ዕድሎች",
+        title: "እኛን ይቀላቀሉ",
+        subtitle: "የእንግዳ ተቀባይነት ወይም የምግብ ዝግጅት ፍላጎት አለዎት? አሁኑኑ ያመልክቱ።"
       },
       reserve: {
         tag: "ቦታ ለማስያዝ",
@@ -247,6 +324,30 @@ export default function LaVieEnRose() {
     }
   ];
 
+  const jobPostings = [
+    {
+      id: 1,
+      title: "Senior Barista & Latte Artist",
+      type: "Full-Time",
+      experience: "2+ Years",
+      desc: "Mastery over espresso extraction, steaming micro-foam, and creating memorable coffee experiences."
+    },
+    {
+      id: 2,
+      title: "Italian Line Cook",
+      type: "Full-Time",
+      experience: "3+ Years",
+      desc: "Specializing in handcrafted fresh pasta, pan sauces, and authentic Italian culinary presentation."
+    },
+    {
+      id: 3,
+      title: "Head Host & Guest Relations",
+      type: "Full-Time / Part-Time",
+      experience: "1+ Year",
+      desc: "Warm, professional individual to manage direct table reservations, greetings, and atmosphere."
+    }
+  ];
+
   const filteredMenu = activeCategory === 'all' 
     ? menuItems 
     : menuItems.filter(item => item.category === activeCategory);
@@ -277,16 +378,18 @@ export default function LaVieEnRose() {
             </div>
           </a>
 
-          {/* Desktop Links */}
-          <div className="hidden md:flex items-center space-x-8 text-xs font-medium uppercase tracking-widest">
+          {/* Desktop Nav Links */}
+          <div className="hidden lg:flex items-center space-x-6 text-xs font-medium uppercase tracking-widest">
             <a href="#about" className="hover:text-[#B26D77] transition-colors">{t.nav.story}</a>
             <a href="#menu" className="hover:text-[#B26D77] transition-colors">{t.nav.menu}</a>
             <a href="#videos" className="hover:text-[#B26D77] transition-colors">{t.nav.videos}</a>
             <a href="#gallery" className="hover:text-[#B26D77] transition-colors">{t.nav.gallery}</a>
+            <a href="#locations" className="hover:text-[#B26D77] transition-colors">{t.nav.locations}</a>
+            <a href="#careers" className="hover:text-[#B26D77] transition-colors">{t.nav.careers}</a>
             <a href="#reviews" className="hover:text-[#B26D77] transition-colors">{t.nav.reviews}</a>
           </div>
 
-          <div className="hidden md:flex items-center gap-4">
+          <div className="hidden lg:flex items-center gap-4">
             <div className="flex items-center bg-white/10 rounded-full p-1 border border-white/20 text-xs">
               <button onClick={() => setLang('en')} className={`px-2.5 py-1 rounded-full transition-all ${lang === 'en' ? 'bg-[#B26D77] text-white font-bold' : 'text-stone-300'}`}>EN</button>
               <button onClick={() => setLang('fr')} className={`px-2.5 py-1 rounded-full transition-all ${lang === 'fr' ? 'bg-[#B26D77] text-white font-bold' : 'text-stone-300'}`}>FR</button>
@@ -302,19 +405,22 @@ export default function LaVieEnRose() {
           </div>
 
           <button 
-            className="md:hidden text-white"
+            className="lg:hidden text-white"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
             {mobileMenuOpen ? <X /> : <MenuIcon />}
           </button>
         </div>
 
+        {/* Mobile Dropdown Nav Menu */}
         {mobileMenuOpen && (
-          <div className="md:hidden bg-[#2D1B1E] px-6 py-6 border-b border-[#3D1A22] space-y-4 text-center">
+          <div className="lg:hidden bg-[#2D1B1E] px-6 py-6 border-b border-[#3D1A22] space-y-4 text-center">
             <a href="#about" onClick={() => setMobileMenuOpen(false)} className="block text-stone-300 hover:text-[#B26D77]">{t.nav.story}</a>
             <a href="#menu" onClick={() => setMobileMenuOpen(false)} className="block text-stone-300 hover:text-[#B26D77]">{t.nav.menu}</a>
             <a href="#videos" onClick={() => setMobileMenuOpen(false)} className="block text-stone-300 hover:text-[#B26D77]">{t.nav.videos}</a>
             <a href="#gallery" onClick={() => setMobileMenuOpen(false)} className="block text-stone-300 hover:text-[#B26D77]">{t.nav.gallery}</a>
+            <a href="#locations" onClick={() => setMobileMenuOpen(false)} className="block text-stone-300 hover:text-[#B26D77]">{t.nav.locations}</a>
+            <a href="#careers" onClick={() => setMobileMenuOpen(false)} className="block text-stone-300 hover:text-[#B26D77]">{t.nav.careers}</a>
             <a href="#reserve" onClick={() => setMobileMenuOpen(false)} className="block text-stone-300 hover:text-[#B26D77]">{t.nav.reserve}</a>
             
             <div className="flex justify-center gap-2 pt-2">
@@ -326,7 +432,7 @@ export default function LaVieEnRose() {
         )}
       </nav>
 
-      {/* Hero Section with Local Hero Asset Overlay */}
+      {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center bg-[#2D1B1E] text-white overflow-hidden pt-28 pb-24">
         <div className="absolute inset-0 z-0 opacity-40">
           <img 
@@ -338,7 +444,6 @@ export default function LaVieEnRose() {
         </div>
 
         <div className="relative z-10 max-w-5xl mx-auto px-6 text-center space-y-8 my-auto">
-          
           <div className="inline-flex items-center gap-2 bg-[#B26D77]/20 border border-[#B26D77]/40 rounded-full px-5 py-2 backdrop-blur-md">
             <Sparkles className="w-4 h-4 text-[#F0DFDC]" />
             <span className="text-xs uppercase font-semibold text-[#F0DFDC] tracking-widest">{t.hero.welcome}</span>
@@ -387,8 +492,8 @@ export default function LaVieEnRose() {
                 <MapPin className="w-5 h-5" />
               </div>
               <div>
-                <p className="text-lg font-bold">Bulbula, Addis</p>
-                <p className="text-xs text-stone-400">Quiet & Peaceful Location</p>
+                <p className="text-lg font-bold">Bulbula & Bole</p>
+                <p className="text-xs text-stone-400">Prime Locations in Addis</p>
               </div>
             </div>
             <div className="col-span-2 md:col-span-1 flex items-center gap-3">
@@ -401,7 +506,6 @@ export default function LaVieEnRose() {
               </div>
             </div>
           </div>
-
         </div>
       </section>
 
@@ -519,8 +623,160 @@ export default function LaVieEnRose() {
         </div>
       </section>
 
-      {/* Video Reels Section with Local MP4 Assets */}
-      <section id="videos" className="py-24 bg-[#2D1B1E] text-white">
+      {/* Locations & Branches Showcase */}
+      <section id="locations" className="py-24 bg-[#FAF5F3] border-b border-stone-200">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center max-w-2xl mx-auto space-y-4 mb-16">
+            <span className="text-xs font-bold uppercase tracking-widest text-[#B26D77]">{t.locations.tag}</span>
+            <h2 className="text-4xl font-serif text-[#2D1B1E]">{t.locations.title}</h2>
+            <p className="text-stone-600 font-light">{t.locations.subtitle}</p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-12">
+            
+            {/* Branch 1: Bulbula Main */}
+            <div className="bg-white rounded-3xl p-8 shadow-xl border border-stone-200/80 flex flex-col justify-between space-y-6">
+              <div>
+                <div className="flex justify-between items-start mb-4">
+                  <div>
+                    <span className="text-xs font-bold uppercase tracking-widest text-[#B26D77]">Main Flagship</span>
+                    <h3 className="text-2xl font-serif text-[#2D1B1E] font-bold">Bulbula Branch</h3>
+                  </div>
+                  <span className="bg-emerald-100 text-emerald-800 text-[10px] font-bold uppercase px-3 py-1 rounded-full">Open Today</span>
+                </div>
+
+                <p className="text-xs text-stone-600 font-light leading-relaxed mb-6">
+                  Tucked in the peaceful streets of Bulbula, offering sun-lit outdoor balcony terrace seating, full French-Italian dining, and specialty coffee roasting.
+                </p>
+
+                <div className="space-y-3 text-xs text-stone-700">
+                  <div className="flex items-center gap-3">
+                    <MapPin className="w-4 h-4 text-[#B26D77]" />
+                    <span>Bulbula, Addis Ababa (Near Maria Mazoriya)</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Clock className="w-4 h-4 text-[#B26D77]" />
+                    <span>Open Daily: 7:00 AM – 10:30 PM</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Phone className="w-4 h-4 text-[#B26D77]" />
+                    <span>099 503 1695</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <a 
+                  href="https://maps.google.com/maps?q=Bulbula%2C%20Addis%20Ababa" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-[#B26D77] hover:underline"
+                >
+                  Open in Google Maps <ArrowUpRight className="w-3.5 h-3.5" />
+                </a>
+                <div className="rounded-2xl overflow-hidden h-48 border border-stone-200">
+                  <iframe 
+                    title="Bulbula Location Map"
+                    src="https://maps.google.com/maps?q=Bulbula%2C%20Addis%20Ababa&hl=en&z=15&output=embed" 
+                    className="w-full h-full border-0" 
+                    allowFullScreen="" 
+                    loading="lazy" 
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Branch 2: Bole Rwanda Branch */}
+            <div className="bg-white rounded-3xl p-8 shadow-xl border border-stone-200/80 flex flex-col justify-between space-y-6">
+              <div>
+                <div className="flex justify-between items-start mb-4">
+                  <div>
+                    <span className="text-xs font-bold uppercase tracking-widest text-[#B26D77]">Bole Branch</span>
+                    <h3 className="text-2xl font-serif text-[#2D1B1E] font-bold">Bole Rwanda Branch</h3>
+                  </div>
+                  <span className="bg-emerald-100 text-emerald-800 text-[10px] font-bold uppercase px-3 py-1 rounded-full">Open Today</span>
+                </div>
+
+                <p className="text-xs text-stone-600 font-light leading-relaxed mb-6">
+                  Our premier destination in Bole Rwanda area, delivering authentic French pastry craft, Italian espresso specialties, and cozy indoor dining.
+                </p>
+
+                <div className="space-y-3 text-xs text-stone-700">
+                  <div className="flex items-center gap-3">
+                    <MapPin className="w-4 h-4 text-[#B26D77]" />
+                    <span>Bole Rwanda Area, Addis Ababa</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Clock className="w-4 h-4 text-[#B26D77]" />
+                    <span>Open Daily: 7:00 AM – 10:30 PM</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Phone className="w-4 h-4 text-[#B26D77]" />
+                    <span>099 503 1695</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <a 
+                  href="https://www.google.com/maps/search/la+vie+en+rose+addis/@8.9900905,38.4738291,11z?entry=ttu&g_ep=EgoyMDI2MDcyNy4wIKXMDSoASAFQAw%3D%3D" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-[#B26D77] hover:underline"
+                >
+                  Open Location Link <ArrowUpRight className="w-3.5 h-3.5" />
+                </a>
+                <div className="rounded-2xl overflow-hidden h-48 border border-stone-200">
+                  <iframe 
+                    title="Bole Rwanda Branch Location Map"
+                    src="https://maps.google.com/maps?q=8.9900905,38.4738291&hl=en&z=14&output=embed" 
+                    className="w-full h-full border-0" 
+                    allowFullScreen="" 
+                    loading="lazy" 
+                  />
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* Careers & Open Hiring Roles */}
+      <section id="careers" className="py-24 bg-[#2D1B1E] text-white">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center max-w-2xl mx-auto space-y-4 mb-16">
+            <span className="text-xs font-bold uppercase tracking-widest text-[#B26D77]">{t.careers.tag}</span>
+            <h2 className="text-4xl font-serif">{t.careers.title}</h2>
+            <p className="text-stone-300 font-light text-sm">{t.careers.subtitle}</p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {jobPostings.map((job) => (
+              <div key={job.id} className="bg-white/5 p-8 rounded-3xl border border-white/10 backdrop-blur-md flex flex-col justify-between space-y-6 hover:border-[#B26D77]/50 transition-all">
+                <div>
+                  <div className="flex justify-between items-center mb-4">
+                    <span className="bg-[#B26D77]/30 text-[#F0DFDC] text-[10px] uppercase font-bold px-3 py-1 rounded-full">{job.type}</span>
+                    <span className="text-xs text-stone-400 flex items-center gap-1"><Briefcase className="w-3.5 h-3.5 text-[#B26D77]" /> {job.experience}</span>
+                  </div>
+                  <h3 className="text-xl font-serif font-bold text-[#F0DFDC] mb-2">{job.title}</h3>
+                  <p className="text-xs text-stone-300 leading-relaxed font-light">{job.desc}</p>
+                </div>
+
+                <button 
+                  onClick={() => openApplyModal(job.title)}
+                  className="w-full bg-[#B26D77] hover:bg-[#96545E] text-white py-3 rounded-xl text-xs uppercase font-bold tracking-wider transition-all flex items-center justify-center gap-2"
+                >
+                  Apply For Role <Send className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Video Reels Section */}
+      <section id="videos" className="py-24 bg-[#2D1B1E] text-white border-t border-white/10">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center max-w-2xl mx-auto space-y-4 mb-16">
             <span className="text-xs font-bold uppercase tracking-widest text-[#B26D77]">{t.videos.tag}</span>
@@ -534,24 +790,47 @@ export default function LaVieEnRose() {
               { id: 'reel3', title: 'Artisanal Bakery & Coffee', src: '/assets/5983144676054539098.mp4', poster: '/assets/5983144676514532823_119.jpg' },
               { id: 'reel4', title: 'Morning Brunch Moments', src: '/assets/5983144676054539096.mp4', poster: '/assets/5983144676514532821_119.jpg' },
             ].map((reel) => (
-              <div key={reel.id} className="relative rounded-2xl overflow-hidden bg-stone-900 shadow-xl group aspect-[9/16]">
+              <div 
+                key={reel.id} 
+                onClick={() => toggleVideo(reel.id)}
+                className="relative rounded-2xl overflow-hidden bg-stone-900 shadow-xl group aspect-[9/16] cursor-pointer"
+              >
                 <video 
                   id={reel.id} 
+                  ref={(el) => {
+                    if (el) {
+                      el.muted = true;
+                      el.defaultMuted = true;
+                      const promise = el.play();
+                      if (promise !== undefined) {
+                        promise.catch(() => {});
+                      }
+                    }
+                  }}
+                  src={reel.src}
                   autoPlay 
                   muted 
+                  defaultMuted
                   loop 
                   playsInline 
+                  preload="auto"
                   poster={reel.poster}
+                  onPlay={() => setPlayingVideo((prev) => ({ ...prev, [reel.id]: true }))}
+                  onPause={() => setPlayingVideo((prev) => ({ ...prev, [reel.id]: false }))}
                   className="w-full h-full object-cover"
                 >
                   <source src={reel.src} type="video/mp4" />
                 </video>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-6">
-                  <div className="flex justify-between items-center">
-                    <p className="text-sm font-semibold">{reel.title}</p>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-6 pointer-events-none">
+                  <div className="flex justify-between items-center w-full">
+                    <p className="text-sm font-semibold text-white">{reel.title}</p>
                     <button 
-                      onClick={() => toggleVideo(reel.id)} 
-                      className="bg-white/20 hover:bg-white/40 backdrop-blur-md p-2.5 rounded-full text-white transition-all"
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleVideo(reel.id);
+                      }} 
+                      className="bg-white/20 hover:bg-white/40 backdrop-blur-md p-2.5 rounded-full text-white transition-all pointer-events-auto"
                     >
                       {playingVideo[reel.id] ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
                     </button>
@@ -563,7 +842,7 @@ export default function LaVieEnRose() {
         </div>
       </section>
 
-      {/* Gallery Section with Local JPG Assets */}
+      {/* Gallery Section */}
       <section id="gallery" className="py-24 max-w-7xl mx-auto px-6">
         <div className="text-center max-w-2xl mx-auto space-y-4 mb-16">
           <span className="text-xs font-bold uppercase tracking-widest text-[#B26D77]">{t.gallery.tag}</span>
@@ -623,7 +902,7 @@ export default function LaVieEnRose() {
         </div>
       </section>
 
-      {/* Reservation Form */}
+      {/* Table Reservation Form */}
       <section id="reserve" className="py-24 max-w-7xl mx-auto px-6">
         <div className="bg-[#2D1B1E] text-white rounded-3xl overflow-hidden shadow-2xl grid lg:grid-cols-12 border border-[#B26D77]/20">
           
@@ -639,11 +918,11 @@ export default function LaVieEnRose() {
             <div className="space-y-4 text-sm text-stone-300">
               <div className="flex items-center gap-3">
                 <MapPin className="w-5 h-5 text-[#B26D77]" />
-                <span>Bulbula, Addis Ababa</span>
+                <span>Bulbula & Bole Rwanda Branches, Addis Ababa</span>
               </div>
               <div className="flex items-center gap-3">
                 <Phone className="w-5 h-5 text-[#B26D77]" />
-                <span>+251 900 000 000</span>
+                <span>099 503 1695</span>
               </div>
               <div className="flex items-center gap-3">
                 <Clock className="w-5 h-5 text-[#B26D77]" />
@@ -664,7 +943,7 @@ export default function LaVieEnRose() {
                 </div>
                 <h3 className="text-2xl font-serif font-bold">Reservation Received!</h3>
                 <p className="text-stone-600 max-w-md text-sm">
-                  Thank you for choosing La Vie En Rose. We have received your booking and look forward to hosting you.
+                  Thank you for choosing La Vie En Rose. We have opened WhatsApp to confirm your table details directly with our team.
                 </p>
               </div>
             ) : (
@@ -743,9 +1022,9 @@ export default function LaVieEnRose() {
 
                 <button 
                   type="submit" 
-                  className="w-full bg-[#B26D77] hover:bg-[#96545E] text-white font-bold py-4 rounded-xl transition-all shadow-md uppercase tracking-wider text-xs"
+                  className="w-full bg-[#B26D77] hover:bg-[#96545E] text-white font-bold py-4 rounded-xl transition-all shadow-md uppercase tracking-wider text-xs flex items-center justify-center gap-2"
                 >
-                  Confirm Table Reservation
+                  Send Table Booking via WhatsApp 💬
                 </button>
               </form>
             )}
@@ -753,53 +1032,93 @@ export default function LaVieEnRose() {
         </div>
       </section>
 
-      {/* Location Map */}
-      <section id="location" className="py-24 bg-white border-t border-stone-200">
-        <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-12 items-center">
-          <div className="space-y-6">
-            <span className="text-xs font-bold uppercase tracking-widest text-[#B26D77]">Visit Us</span>
-            <h2 className="text-4xl font-serif text-[#2D1B1E]">Tucked in Peaceful Bulbula</h2>
-            <p className="text-stone-600 font-light leading-relaxed">
-              Where quiet elegance meets everyday comfort. Come enjoy our sun-lit terrace, freshly roasted specialty coffee, and French-Italian dining.
-            </p>
+      {/* Careers Application Modal */}
+      {careerModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+          <div className="bg-white text-stone-900 rounded-3xl p-8 max-w-lg w-full relative shadow-2xl space-y-6">
+            <button 
+              onClick={() => setCareerModalOpen(false)}
+              className="absolute top-6 right-6 text-stone-400 hover:text-stone-900"
+            >
+              <X className="w-5 h-5" />
+            </button>
 
-            <div className="space-y-4 pt-2">
-              <div className="p-4 rounded-2xl bg-[#FAF5F3] flex items-start gap-4">
-                <MapPin className="w-6 h-6 text-[#B26D77] shrink-0 mt-1" />
-                <div>
-                  <h4 className="font-bold text-stone-900">Address</h4>
-                  <p className="text-sm text-stone-600">Bulbula, Addis Ababa, Ethiopia</p>
-                </div>
-              </div>
-
-              <div className="p-4 rounded-2xl bg-[#FAF5F3] flex items-start gap-4">
-                <Clock className="w-6 h-6 text-[#B26D77] shrink-0 mt-1" />
-                <div>
-                  <h4 className="font-bold text-stone-900">Hours of Operation</h4>
-                  <p className="text-sm text-stone-600">Monday – Sunday: Open Daily (Breakfast to Dinner)</p>
-                </div>
-              </div>
+            <div>
+              <span className="text-xs font-bold uppercase tracking-widest text-[#B26D77]">Apply Now</span>
+              <h3 className="text-2xl font-serif font-bold text-[#2D1B1E]">{selectedRole}</h3>
+              <p className="text-xs text-stone-500 mt-1">Submit your details and our management team will reach out to you.</p>
             </div>
-          </div>
 
-          <div className="rounded-3xl overflow-hidden shadow-xl h-[400px] bg-stone-200 relative border border-stone-200">
-            <iframe 
-              title="La Vie En Rose Location"
-              src="https://maps.google.com/maps?q=Bulbula%2C%20Addis%20Ababa&hl=en&z=15&output=embed" 
-              className="w-full h-full border-0" 
-              allowFullScreen="" 
-              loading="lazy" 
-            />
+            {careerSubmitted ? (
+              <div className="py-8 text-center space-y-3">
+                <CheckCircle2 className="w-12 h-12 text-emerald-600 mx-auto" />
+                <h4 className="text-lg font-bold">Application Received!</h4>
+                <p className="text-xs text-stone-600">Thank you for your interest in joining La Vie En Rose.</p>
+              </div>
+            ) : (
+              <form onSubmit={handleCareerSubmit} className="space-y-4">
+                <div>
+                  <label className="block text-xs font-bold uppercase text-stone-600 mb-1">Full Name</label>
+                  <input 
+                    type="text" 
+                    required 
+                    placeholder="Your Full Name"
+                    value={careerForm.name}
+                    onChange={(e) => setCareerForm({...careerForm, name: e.target.value})}
+                    className="w-full bg-[#FAF5F3] border border-stone-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#B26D77]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold uppercase text-stone-600 mb-1">Phone Number</label>
+                  <input 
+                    type="tel" 
+                    required 
+                    placeholder="0911..."
+                    value={careerForm.phone}
+                    onChange={(e) => setCareerForm({...careerForm, phone: e.target.value})}
+                    className="w-full bg-[#FAF5F3] border border-stone-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#B26D77]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold uppercase text-stone-600 mb-1">Years of Experience</label>
+                  <input 
+                    type="text" 
+                    required 
+                    placeholder="e.g. 2 years at specialty cafe"
+                    value={careerForm.experience}
+                    onChange={(e) => setCareerForm({...careerForm, experience: e.target.value})}
+                    className="w-full bg-[#FAF5F3] border border-stone-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#B26D77]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold uppercase text-stone-600 mb-1">Short Introduction / Notes</label>
+                  <textarea 
+                    rows="3" 
+                    placeholder="Tell us about yourself..."
+                    value={careerForm.message}
+                    onChange={(e) => setCareerForm({...careerForm, message: e.target.value})}
+                    className="w-full bg-[#FAF5F3] border border-stone-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#B26D77]"
+                  ></textarea>
+                </div>
+
+                <button 
+                  type="submit" 
+                  className="w-full bg-[#B26D77] hover:bg-[#96545E] text-white font-bold py-3.5 rounded-xl text-xs uppercase tracking-wider transition-all"
+                >
+                  Submit Application
+                </button>
+              </form>
+            )}
           </div>
         </div>
-      </section>
+      )}
 
       {/* Footer */}
       <footer className="bg-[#2D1B1E] text-white py-12 border-t border-[#3D1A22]">
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
           <div>
             <span className="text-2xl font-serif text-[#F0DFDC] block">La Vie En Rose</span>
-            <p className="text-xs text-stone-400 mt-1">Where Addis meets Paris — Bulbula</p>
+            <p className="text-xs text-stone-400 mt-1">Where Addis meets Paris — Bulbula & Bole Rwanda</p>
           </div>
 
           <div className="text-xs text-stone-500">
@@ -810,7 +1129,7 @@ export default function LaVieEnRose() {
 
       {/* Floating WhatsApp Quick-Contact */}
       <a 
-        href="https://wa.me/251900000000" 
+        href="https://wa.me/251995031695" 
         target="_blank" 
         rel="noreferrer" 
         className="fixed bottom-6 right-6 z-50 bg-[#25D366] text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-transform flex items-center justify-center"
