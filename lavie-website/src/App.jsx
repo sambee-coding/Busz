@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   Phone, 
   MapPin, 
@@ -131,7 +131,8 @@ export default function LaVieEnRose() {
       menu: {
         tag: "Curated Offerings",
         title: "A Taste of the House",
-        subtitle: "Artisanal recipes crafted with European culinary precision and local ingredients."
+        subtitle: "Artisanal recipes crafted with European culinary precision and local ingredients.",
+        categories: { all: "All", breakfast: "Breakfast", mains: "Mains", fasting: "Fasting", drinks: "Drinks" }
       },
       videos: {
         tag: "Video Snapshots",
@@ -182,7 +183,8 @@ export default function LaVieEnRose() {
       menu: {
         tag: "Nos Propositions",
         title: "Un Goût de la Maison",
-        subtitle: "Des recettes artisanales créées avec la précision culinaire européenne."
+        subtitle: "Des recettes artisanales créées avec la précision culinaire européenne.",
+        categories: { all: "Tous", breakfast: "Petit-Déjeuner", mains: "Plats Principaux", fasting: "Jeûne", drinks: "Boissons" }
       },
       videos: {
         tag: "Clips Vidéo",
@@ -213,12 +215,12 @@ export default function LaVieEnRose() {
       }
     },
     am: {
-      nav: { story: "ታሪካችን", menu: "ምናሌ", videos: "ቪዲዮዎች", gallery: "ማዕከለ-ስዕላት", reviews: "ግምገማዎች", locations: "ቅርንጫፎች", careers: "ሥራ ዕድል", reserve: "ቦታ ያስይዙ" },
+      nav: { story: "ታሪካችን", menu: "የምግብ ዝርዝር", videos: "ቪዲዮዎች", gallery: "ማዕከለ-ስዕላት", reviews: "ግምገማዎች", locations: "ቅርንጫፎች", careers: "ሥራ ዕድል", reserve: "ቦታ ያስይዙ" },
       hero: {
         welcome: "እንኳን ደህና መጡ",
         tagline: "አዲስ ፓሪስን የሚያገኝበት — ቡልቡላ እና ቦሌ ሩዋንዳ",
         desc: "በአዲስ አበባ እምብርት ውስጥ የሚገኝ የፈረንሳይና የጣሊያን ውብ ጣዕሞችና ምቹ ከባቢ አየር።",
-        ctaMenu: "ምናሌ ይመልከቱ",
+        ctaMenu: "የምግብ ዝርዝር ይመልከቱ",
         ctaBook: "ቦታ ያስይዙ"
       },
       about: {
@@ -228,12 +230,13 @@ export default function LaVieEnRose() {
         p2: "ከጠዋት ቁርስ እስከ እራት፣ የጾም አማራጮችን ጨምሮ ለሁሉም እንግዶች የተዘጋጀ።",
         point1: "በፀሐይ የተሞላ የውጭ መቀመጫ",
         point2: "ከቁርስ እስከ እራት፣ በየቀኑ",
-        point3: "የጾም አማራጮች ያሉት ምናሌ"
+        point3: "የጾም አማራጮች ያሉት የምግብ ዝርዝር"
       },
       menu: {
-        tag: "የእኛ ምናሌ",
+        tag: "የምግብ ዝርዝራችን",
         title: "የቤቱ ጣዕም",
-        subtitle: "በጥንቃቄ የተዘጋጁ ልዩ የጣሊያንና የፈረንሳይ ምግቦች።"
+        subtitle: "በጥንቃቄ የተዘጋጁ ልዩ የጣሊያንና የፈረንሳይ ምግቦች።",
+        categories: { all: "ሁሉም", breakfast: "ቁርስ", mains: "ዋና ምግቦች", fasting: "የጾም", drinks: "መጠጦች" }
       },
       videos: {
         tag: "የቪዲዮ ቅንጥቦች",
@@ -514,10 +517,11 @@ export default function LaVieEnRose() {
         <div className="grid md:grid-cols-2 gap-16 items-center">
           <div className="relative">
             <div className="relative rounded-3xl overflow-hidden shadow-2xl aspect-[4/5] border border-[#B26D77]/20">
-              <img 
+              <OptimizedImage 
                 src="/assets/5983144676514532820_119.jpg" 
                 alt="La Vie En Rose Atmosphere" 
-                className="w-full h-full object-cover"
+                priority={true}
+                containerClassName="w-full h-full"
               />
             </div>
             <div className="absolute -bottom-8 -right-8 bg-white p-6 rounded-2xl shadow-xl border border-stone-100 max-w-xs hidden sm:block">
@@ -582,7 +586,7 @@ export default function LaVieEnRose() {
                       : 'bg-stone-100 text-stone-600 hover:bg-stone-200'
                   }`}
                 >
-                  {cat}
+                  {t.menu.categories ? t.menu.categories[cat] : cat}
                 </button>
               ))}
             </div>
@@ -593,12 +597,13 @@ export default function LaVieEnRose() {
               <div key={item.id} className="bg-[#FAF5F3] rounded-2xl overflow-hidden group hover:shadow-xl transition-all duration-300 border border-stone-200/60 flex flex-col justify-between">
                 <div>
                   <div className="relative aspect-[4/3] overflow-hidden">
-                    <img 
+                    <OptimizedImage 
                       src={item.image} 
                       alt={item.name} 
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      className="group-hover:scale-105 transition-transform duration-500"
+                      containerClassName="w-full h-full"
                     />
-                    <span className="absolute top-3 right-3 bg-[#2D1B1E]/90 backdrop-blur-md text-[#F0DFDC] text-[10px] uppercase font-bold px-3 py-1 rounded-full">
+                    <span className="absolute top-3 right-3 z-20 bg-[#2D1B1E]/90 backdrop-blur-md text-[#F0DFDC] text-[10px] uppercase font-bold px-3 py-1 rounded-full">
                       {item.highlight}
                     </span>
                   </div>
@@ -790,53 +795,7 @@ export default function LaVieEnRose() {
               { id: 'reel3', title: 'Artisanal Bakery & Coffee', src: '/assets/5983144676054539098.mp4', poster: '/assets/5983144676514532823_119.jpg' },
               { id: 'reel4', title: 'Morning Brunch Moments', src: '/assets/5983144676054539096.mp4', poster: '/assets/5983144676514532821_119.jpg' },
             ].map((reel) => (
-              <div 
-                key={reel.id} 
-                onClick={() => toggleVideo(reel.id)}
-                className="relative rounded-2xl overflow-hidden bg-stone-900 shadow-xl group aspect-[9/16] cursor-pointer"
-              >
-                <video 
-                  id={reel.id} 
-                  ref={(el) => {
-                    if (el) {
-                      el.muted = true;
-                      el.defaultMuted = true;
-                      const promise = el.play();
-                      if (promise !== undefined) {
-                        promise.catch(() => {});
-                      }
-                    }
-                  }}
-                  src={reel.src}
-                  autoPlay 
-                  muted 
-                  defaultMuted
-                  loop 
-                  playsInline 
-                  preload="auto"
-                  poster={reel.poster}
-                  onPlay={() => setPlayingVideo((prev) => ({ ...prev, [reel.id]: true }))}
-                  onPause={() => setPlayingVideo((prev) => ({ ...prev, [reel.id]: false }))}
-                  className="w-full h-full object-cover"
-                >
-                  <source src={reel.src} type="video/mp4" />
-                </video>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-6 pointer-events-none">
-                  <div className="flex justify-between items-center w-full">
-                    <p className="text-sm font-semibold text-white">{reel.title}</p>
-                    <button 
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        toggleVideo(reel.id);
-                      }} 
-                      className="bg-white/20 hover:bg-white/40 backdrop-blur-md p-2.5 rounded-full text-white transition-all pointer-events-auto"
-                    >
-                      {playingVideo[reel.id] ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
-                    </button>
-                  </div>
-                </div>
-              </div>
+              <VideoReelCard key={reel.id} reel={reel} />
             ))}
           </div>
         </div>
@@ -862,8 +821,13 @@ export default function LaVieEnRose() {
             { img: '/assets/5983144676514532816_119.jpg', caption: 'Grilled Chicken & Seasoned Rice' }
           ].map((item, idx) => (
             <div key={idx} className="relative rounded-2xl overflow-hidden group shadow-lg aspect-square">
-              <img src={item.img} alt={item.caption} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-6">
+              <OptimizedImage 
+                src={item.img} 
+                alt={item.caption} 
+                className="group-hover:scale-105 transition-transform duration-500"
+                containerClassName="w-full h-full"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-6 z-20">
                 <span className="text-white text-xs uppercase font-semibold tracking-wider">{item.caption}</span>
               </div>
             </div>
@@ -1035,7 +999,7 @@ export default function LaVieEnRose() {
       {/* Careers Application Modal */}
       {careerModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
-          <div className="bg-white text-stone-900 rounded-3xl p-8 max-w-lg w-full relative shadow-2xl space-y-6">
+          <div className="bg-white text-stone-900 rounded-3xl p-6 sm:p-8 max-w-lg w-full max-h-[90vh] overflow-y-auto relative shadow-2xl space-y-6">
             <button 
               onClick={() => setCareerModalOpen(false)}
               className="absolute top-6 right-6 text-stone-400 hover:text-stone-900"
@@ -1138,6 +1102,103 @@ export default function LaVieEnRose() {
         💬
       </a>
 
+    </div>
+  );
+}
+
+function VideoReelCard({ reel }) {
+  const videoRef = useRef(null);
+  const [isPlaying, setIsPlaying] = useState(true);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    video.muted = true;
+    video.defaultMuted = true;
+
+    const playPromise = video.play();
+    if (playPromise !== undefined) {
+      playPromise.catch((err) => {
+        console.log('Autoplay deferred:', err);
+        setIsPlaying(false);
+      });
+    }
+  }, []);
+
+  const togglePlay = () => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    if (video.paused) {
+      video.play().then(() => setIsPlaying(true)).catch(() => {});
+    } else {
+      video.pause();
+      setIsPlaying(false);
+    }
+  };
+
+  return (
+    <div 
+      onClick={togglePlay}
+      className="relative rounded-2xl overflow-hidden bg-stone-900 shadow-xl group aspect-[9/16] cursor-pointer"
+    >
+      <video 
+        ref={videoRef}
+        id={reel.id}
+        src={reel.src}
+        autoPlay 
+        muted 
+        defaultMuted
+        loop 
+        playsInline 
+        preload="auto"
+        poster={reel.poster}
+        onPlay={() => setIsPlaying(true)}
+        onPause={() => setIsPlaying(false)}
+        className="w-full h-full object-cover"
+      >
+        <source src={reel.src} type="video/mp4" />
+      </video>
+      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-6 pointer-events-none">
+        <div className="flex justify-between items-center w-full">
+          <p className="text-sm font-semibold text-white">{reel.title}</p>
+          <button 
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              togglePlay();
+            }} 
+            className="bg-[#B26D77] hover:bg-[#96545E] backdrop-blur-md p-3 rounded-full text-white shadow-lg transition-all pointer-events-auto flex items-center justify-center"
+          >
+            {isPlaying ? <Pause className="w-4 h-4 fill-current" /> : <Play className="w-4 h-4 fill-current ml-0.5" />}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function OptimizedImage({ src, alt, className = '', priority = false, containerClassName = '', ...props }) {
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  return (
+    <div className={`relative overflow-hidden bg-stone-200 ${containerClassName}`}>
+      {!isLoaded && (
+        <div className="absolute inset-0 bg-stone-200 animate-pulse z-10" />
+      )}
+      <img
+        src={src}
+        alt={alt}
+        loading={priority ? 'eager' : 'lazy'}
+        decoding="async"
+        fetchPriority={priority ? 'high' : 'auto'}
+        onLoad={() => setIsLoaded(true)}
+        className={`w-full h-full object-cover transition-opacity duration-500 ${
+          isLoaded ? 'opacity-100' : 'opacity-0'
+        } ${className}`}
+        {...props}
+      />
     </div>
   );
 }
